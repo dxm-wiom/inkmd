@@ -11,7 +11,7 @@ export function render(data) {
   if (!content || content.trim().length === 0) {
     return `
       <div class="reader-layout view-enter">
-        ${topBar.render(name)}
+        ${topBar.render(name, data)}
         <div class="reader-search-bar">${search.render()}</div>
         <div class="reader-sidebar"></div>
         <div class="reader-content">
@@ -29,7 +29,7 @@ export function render(data) {
 
   return `
     <div class="reader-layout view-enter">
-      ${topBar.render(name)}
+      ${topBar.render(name, data)}
       <div class="reader-search-bar">${search.render()}</div>
       <aside class="reader-sidebar">
         ${toc.render(headings)}

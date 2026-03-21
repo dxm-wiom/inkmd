@@ -1,15 +1,25 @@
 import './style.css';
 import { on } from './core/events.js';
 import { initTheme } from './components/theme-toggle.js';
+import { openDocument, getDocument, isDirty, updateContent } from './core/document.js';
 import * as landing from './views/landing.js';
 import * as reader from './views/reader.js';
+import * as editor from './views/editor.js';
+import { showUnsavedModal } from './views/editor.js';
 
 const app = document.getElementById('app');
 
 let currentView = null;
 let currentData = null;
 
-function navigateTo(view, data) {
+async function navigateTo(view, data) {
+  // Dirty check: if leaving editor with unsaved changes, prompt user
+  if (currentView === editor && isDirty()) {
+    const result = await showUnsavedModal();
+    if (result === 'cancel') return;
+    // 'discard' or 'save' both proceed with navigation
+  }
+
   // Destroy previous view
   if (currentView?.destroy) currentView.destroy();
 
@@ -25,6 +35,7 @@ initTheme();
 
 // Event listeners
 on('file:loaded', (data) => {
+  openDocument({ name: data.name, content: data.content, filePath: data.filePath || null });
   navigateTo(reader, data);
 });
 
@@ -33,7 +44,15 @@ on('navigate:landing', () => {
 });
 
 on('navigate:reader', (data) => {
-  navigateTo(reader, data);
+  // If coming from editor, data might be the document model
+  if (data?.content) {
+    openDocument({ name: data.name, content: data.content, filePath: data.filePath || null });
+  }
+  navigateTo(reader, data || getDocument());
+});
+
+on('navigate:editor', () => {
+  navigateTo(editor);
 });
 
 // Start on landing
@@ -42,6 +61,7 @@ navigateTo(landing, {});
 // Listen for files opened via Electron native menu/dialog/file association
 if (window.electronAPI) {
   window.electronAPI.onFileOpened((data) => {
+    openDocument({ name: data.name, content: data.content, filePath: data.filePath || null });
     navigateTo(reader, data);
   });
   // Tell main process we're ready to receive files (for CLI args / file associations)

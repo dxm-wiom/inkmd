@@ -1,6 +1,6 @@
 {
   "name": "inkmd",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A beautiful markdown reader",
   "type": "module",
   "main": "electron/main.js",
@@ -57,13 +57,13 @@
         "ext": "md",
         "name": "Markdown File",
         "description": "Markdown Document",
-        "role": "Viewer"
+        "role": "Editor"
       },
       {
         "ext": "markdown",
         "name": "Markdown File",
         "description": "Markdown Document",
-        "role": "Viewer"
+        "role": "Editor"
       }
     ]
   }

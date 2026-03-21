@@ -101,6 +101,13 @@ function buildMenu() {
           accelerator: 'CmdOrCtrl+O',
           click: () => openFileDialog(),
         },
+        {
+          label: 'Save',
+          accelerator: 'CmdOrCtrl+S',
+          click: () => {
+            if (mainWindow) mainWindow.webContents.send('menu-save');
+          },
+        },
         { type: 'separator' },
         { role: 'quit' },
       ],
@@ -152,7 +159,7 @@ function sendFileToRenderer(filePath) {
     const resolved = path.resolve(filePath);
     const content = fs.readFileSync(resolved, 'utf-8');
     const name = path.basename(resolved);
-    mainWindow.webContents.send('file-opened', { name, content });
+    mainWindow.webContents.send('file-opened', { name, content, filePath: resolved });
   } catch {
     // File not found or unreadable — ignore silently
   }
@@ -184,5 +191,28 @@ ipcMain.handle('read-file', async (_event, filePath) => {
     return { name, content };
   } catch {
     return null;
+  }
+});
+
+ipcMain.handle('save-file', async (_event, { filePath, content, name }) => {
+  try {
+    if (filePath) {
+      await fs.promises.writeFile(filePath, content, 'utf-8');
+      return { success: true, filePath };
+    } else {
+      const { canceled, filePath: savePath } = await dialog.showSaveDialog(mainWindow, {
+        title: 'Save Markdown File',
+        defaultPath: name || 'document.md',
+        filters: [
+          { name: 'Markdown', extensions: ['md', 'markdown'] },
+          { name: 'All Files', extensions: ['*'] },
+        ],
+      });
+      if (canceled || !savePath) return { success: false };
+      await fs.promises.writeFile(savePath, content, 'utf-8');
+      return { success: true, filePath: savePath };
+    }
+  } catch {
+    return { success: false };
   }
 });

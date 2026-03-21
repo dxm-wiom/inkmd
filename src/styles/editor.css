@@ -1,0 +1,420 @@
+/* Editor layout */
+.editor-layout {
+  display: grid;
+  grid-template-rows: var(--topbar-height) auto 1fr;
+  min-height: 100vh;
+}
+
+.editor-topbar {
+  grid-row: 1;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.editor-toolbar {
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-md);
+  height: 36px;
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-theme);
+}
+
+.editor-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.editor-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Toolbar formatting buttons */
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.toolbar-btn:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text);
+}
+
+.toolbar-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--color-border);
+  margin: 0 var(--space-xs);
+}
+
+/* Heading dropdown */
+.toolbar-heading-wrap {
+  position: relative;
+}
+
+.toolbar-heading-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.toolbar-heading-menu.open {
+  display: block;
+}
+
+.toolbar-heading-option {
+  display: block;
+  width: 100%;
+  padding: var(--space-xs) var(--space-md);
+  border: none;
+  background: none;
+  text-align: left;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight, 700);
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--transition-fast);
+}
+
+.toolbar-heading-option:hover {
+  background: var(--color-bg-secondary);
+}
+
+.toolbar-heading-option[data-level="1"] { font-size: var(--text-lg); }
+.toolbar-heading-option[data-level="2"] { font-size: var(--text-base); }
+.toolbar-heading-option[data-level="3"] { font-size: var(--text-sm); font-style: italic; }
+
+/* Send to Claude button */
+.btn-claude {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-claude:hover {
+  background: var(--color-accent-hover);
+}
+
+.btn-claude:active {
+  transform: scale(0.97);
+}
+
+.btn-claude svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Split pane */
+.editor-split {
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 0;
+}
+
+.editor-pane-write {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--color-border);
+  position: relative;
+}
+
+/* Red accent mark on divider */
+.editor-pane-write::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  z-index: 1;
+}
+
+.editor-pane-preview {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Textarea — editorial, not IDE */
+.editor-textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: var(--space-xl) var(--space-lg);
+  border: none;
+  outline: none;
+  resize: none;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.7;
+  caret-color: var(--color-accent);
+  tab-size: 4;
+  transition: background-color var(--transition-theme), color var(--transition-theme);
+}
+
+.editor-textarea::placeholder {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.editor-preview-content {
+  padding: var(--space-xl) var(--space-lg);
+  max-width: calc(var(--content-max-width) + var(--space-lg) * 2);
+}
+
+/* Topbar title with dirty indicator */
+.topbar-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.dirty-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  flex-shrink: 0;
+  display: none;
+}
+
+.dirty-dot.visible {
+  display: block;
+}
+
+/* Mobile: segmented tab switcher */
+.editor-tab-switcher {
+  display: none;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.editor-tab-bar {
+  display: flex;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.editor-tab {
+  flex: 1;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.editor-tab.active {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Unsaved changes modal */
+.unsaved-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unsaved-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(38, 38, 53, 0.4);
+}
+
+[data-theme="dark"] .unsaved-backdrop {
+  background: rgba(26, 26, 46, 0.6);
+}
+
+.unsaved-modal {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  max-width: 380px;
+  width: 90%;
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+}
+
+.unsaved-modal h3 {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--heading-weight, 700);
+  margin-bottom: var(--space-sm);
+  color: var(--color-text);
+}
+
+.unsaved-modal p {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+.unsaved-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+}
+
+/* Send to Claude FAB for mobile */
+.claude-fab {
+  display: none;
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.claude-fab:hover {
+  transform: scale(1.05);
+  background: var(--color-accent-hover);
+}
+
+.claude-fab svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Mobile overrides */
+@media (max-width: 600px) {
+  .editor-tab-switcher {
+    display: block;
+  }
+
+  .editor-layout {
+    grid-template-rows: var(--topbar-height) auto auto 1fr;
+  }
+
+  .editor-tab-switcher {
+    grid-row: 3;
+  }
+
+  .editor-split {
+    grid-row: 4;
+    grid-template-columns: 1fr;
+  }
+
+  .editor-pane-write {
+    border-right: none;
+  }
+
+  .editor-pane-write::after {
+    display: none;
+  }
+
+  /* Default mobile: show Write pane, hide Preview pane */
+  .editor-pane-preview {
+    display: none;
+  }
+
+  /* When Write tab hidden (Preview tab active), show preview, hide write */
+  .editor-pane-write.hidden {
+    display: none;
+  }
+
+  .editor-pane-write.hidden ~ .editor-pane-preview {
+    display: block;
+    grid-column: 1;
+    width: 100%;
+  }
+
+  /* Hide Send to Claude from toolbar, show FAB instead */
+  .editor-toolbar .btn-claude {
+    display: none;
+  }
+
+  .claude-fab {
+    display: flex;
+  }
+
+  .editor-textarea {
+    padding: var(--space-lg) var(--space-sm);
+  }
+
+  .editor-preview-content {
+    padding: var(--space-lg) var(--space-sm);
+  }
+}
