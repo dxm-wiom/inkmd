@@ -5,6 +5,8 @@
   line-height: var(--lh-body);
   color: var(--color-text);
   word-wrap: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 .markdown-body > *:first-child {
@@ -407,4 +409,47 @@ mark.search-highlight.active {
   cursor: pointer;
   display: flex;
   align-items: center;
+}
+
+/* Mobile reader overrides */
+@media (max-width: 600px) {
+  .markdown-body h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .markdown-body h2 {
+    font-size: var(--text-xl);
+  }
+
+  .markdown-body h3 {
+    font-size: var(--text-lg);
+  }
+
+  .markdown-body pre {
+    margin-left: calc(-1 * var(--space-sm));
+    margin-right: calc(-1 * var(--space-sm));
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .markdown-body blockquote {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .search-input {
+    min-width: 0;
+  }
+
+  .search-count {
+    min-width: auto;
+    font-size: 10px;
+  }
+
+  .toc-fab {
+    bottom: var(--space-md);
+    right: var(--space-md);
+    width: 42px;
+    height: 42px;
+  }
 }

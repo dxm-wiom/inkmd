@@ -6,6 +6,7 @@
   border: 1px solid var(--color-code-border);
   background: var(--color-code-bg);
   overflow: hidden;
+  max-width: 100%;
 }
 
 .markdown-body pre code {
