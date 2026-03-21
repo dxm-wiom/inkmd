@@ -1,0 +1,188 @@
+import { app, BrowserWindow, ipcMain, dialog, Menu, shell } from 'electron';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const MD_REGEX = /\.(md|markdown|mdown|mkd|mdx|txt)$/i;
+
+let mainWindow;
+let pendingFile = null; // file to open once the renderer is ready
+
+// Single-instance lock — so file associations work when the app is already open
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (_event, argv) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+      const filePath = findMdInArgs(argv);
+      if (filePath) {
+        if (mainWindow.webContents.isLoading()) {
+          pendingFile = filePath;
+        } else {
+          sendFileToRenderer(filePath);
+        }
+      }
+    }
+  });
+
+  app.whenReady().then(() => {
+    createWindow();
+
+    const filePath = findMdInArgs(process.argv);
+    if (filePath) {
+      pendingFile = filePath;
+    }
+
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+      }
+    });
+  });
+}
+
+app.on('window-all-closed', () => {
+  app.quit();
+});
+
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    width: 1100,
+    height: 750,
+    minWidth: 600,
+    minHeight: 500,
+    title: 'inkMD',
+    icon: path.join(__dirname, '..', 'build', 'icon.ico'),
+    backgroundColor: '#faf6f0',
+    show: false,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.cjs'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+    },
+  });
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
+  // Block all navigation — the app is a single-page app that never navigates
+  mainWindow.webContents.on('will-navigate', (e) => {
+    e.preventDefault();
+  });
+
+  // Open external links in system browser
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      shell.openExternal(url);
+    }
+    return { action: 'deny' };
+  });
+
+  mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+  buildMenu();
+}
+
+function buildMenu() {
+  const isDev = !app.isPackaged;
+  const template = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Open Markdown File...',
+          accelerator: 'CmdOrCtrl+O',
+          click: () => openFileDialog(),
+        },
+        { type: 'separator' },
+        { role: 'quit' },
+      ],
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'selectAll' },
+      ],
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
+        ...(isDev ? [{ type: 'separator' }, { role: 'toggleDevTools' }] : []),
+      ],
+    },
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
+async function openFileDialog() {
+  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+    title: 'Open Markdown File',
+    filters: [
+      { name: 'Markdown', extensions: ['md', 'markdown', 'mdown', 'mkd', 'mdx', 'txt'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
+    properties: ['openFile'],
+  });
+
+  if (canceled || filePaths.length === 0) return;
+  sendFileToRenderer(filePaths[0]);
+}
+
+function sendFileToRenderer(filePath) {
+  try {
+    const resolved = path.resolve(filePath);
+    const content = fs.readFileSync(resolved, 'utf-8');
+    const name = path.basename(resolved);
+    mainWindow.webContents.send('file-opened', { name, content });
+  } catch {
+    // File not found or unreadable — ignore silently
+  }
+}
+
+function findMdInArgs(argv) {
+  const args = argv.slice(app.isPackaged ? 1 : 2);
+  const match = args.find((a) => !a.startsWith('-') && MD_REGEX.test(a));
+  if (match && fs.existsSync(path.resolve(match))) return match;
+  return null;
+}
+
+// Renderer signals it's ready — send any pending file
+ipcMain.on('renderer-ready', () => {
+  if (pendingFile) {
+    sendFileToRenderer(pendingFile);
+    pendingFile = null;
+  }
+});
+
+ipcMain.handle('open-file-dialog', async () => {
+  await openFileDialog();
+});
+
+ipcMain.handle('read-file', async (_event, filePath) => {
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const name = path.basename(filePath);
+    return { name, content };
+  } catch {
+    return null;
+  }
+});

@@ -1,0 +1,54 @@
+/* Modern theme — editorial serif, airmail-inspired */
+[data-font-theme="modern"] {
+  --font-heading: 'Playfair Display', 'Georgia', serif;
+  --font-body: 'Libre Baskerville', 'Georgia', serif;
+  --font-ui: 'Lato', 'Helvetica Neue', 'Arial', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+  --heading-weight: 400;
+  --heading-weight-light: 400;
+  --body-weight: 400;
+  --body-weight-medium: 700;
+}
+
+/* Classic theme — clean sans-serif */
+[data-font-theme="classic"] {
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+  --heading-weight: 700;
+  --heading-weight-light: 600;
+  --body-weight: 400;
+  --body-weight-medium: 500;
+}
+
+/* Fluid type scale */
+:root {
+  --text-xs: clamp(0.6875rem, 0.66rem + 0.12vw, 0.75rem);
+  --text-sm: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
+  --text-base: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  --text-lg: clamp(1.1875rem, 1.05rem + 0.7vw, 1.5rem);
+  --text-xl: clamp(1.375rem, 1.1rem + 1.3vw, 1.875rem);
+  --text-2xl: clamp(1.625rem, 1.2rem + 1.8vw, 2.375rem);
+  --text-3xl: clamp(2rem, 1.4rem + 2.8vw, 3rem);
+  --text-code: clamp(0.8125rem, 0.79rem + 0.12vw, 0.875rem);
+
+  --lh-body: 1.7;
+  --lh-heading: 1.15;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--body-weight);
+  line-height: var(--lh-body);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --lh-body: 1.55;
+  }
+}

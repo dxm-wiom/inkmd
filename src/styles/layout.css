@@ -1,0 +1,122 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  transition: background-color var(--transition-theme), color var(--transition-theme);
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-md);
+  z-index: 1000;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  letter-spacing: 0.5px;
+}
+
+.skip-link:focus {
+  top: var(--space-md);
+}
+
+/* Reader layout */
+.reader-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: var(--topbar-height) auto 1fr;
+  min-height: 100vh;
+}
+
+.reader-topbar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.reader-search-bar {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.reader-sidebar {
+  grid-column: 1;
+  grid-row: 3;
+  position: sticky;
+  top: var(--topbar-height);
+  height: calc(100vh - var(--topbar-height));
+  overflow-y: auto;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg);
+  transition: background-color var(--transition-theme);
+}
+
+.reader-content {
+  grid-column: 2;
+  grid-row: 3;
+  padding: var(--space-3xl);
+  max-width: calc(var(--content-max-width) + var(--space-3xl) * 2);
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .reader-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .reader-sidebar {
+    display: none;
+  }
+
+  .reader-content {
+    grid-column: 1;
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .reader-search-bar {
+    grid-column: 1;
+  }
+}
+
+/* View transitions */
+.view-enter {
+  animation: fadeIn var(--transition-base) ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

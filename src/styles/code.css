@@ -1,0 +1,203 @@
+/* Code blocks */
+.markdown-body pre {
+  position: relative;
+  margin: 1.5em 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-code-border);
+  background: var(--color-code-bg);
+  overflow: hidden;
+}
+
+.markdown-body pre code {
+  display: block;
+  padding: var(--space-md);
+  padding-top: calc(var(--space-md) + 28px);
+  font-family: var(--font-mono);
+  font-size: var(--text-code);
+  line-height: 1.6;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  tab-size: 4;
+}
+
+/* Code block header */
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  padding: 0 var(--space-sm);
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-code-border);
+  z-index: 1;
+}
+
+.code-lang {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.code-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.code-copy-btn:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
+.code-copy-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.code-copy-btn.copied {
+  color: var(--color-success);
+}
+
+/* highlight.js — warm light theme */
+.hljs {
+  color: #262635;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #8e8e9e;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  color: #c5232a;
+}
+
+.hljs-number,
+.hljs-string,
+.hljs-meta .hljs-meta-string,
+.hljs-literal,
+.hljs-doctag,
+.hljs-regexp {
+  color: #1a6b50;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #7b4daa;
+}
+
+.hljs-attribute,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-type {
+  color: #b45309;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-subst,
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-link {
+  color: #2563a0;
+}
+
+.hljs-built_in,
+.hljs-deletion {
+  color: #1a6b50;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* Dark mode highlight.js */
+[data-theme="dark"] .hljs {
+  color: #e8e4df;
+}
+
+[data-theme="dark"] .hljs-comment,
+[data-theme="dark"] .hljs-quote {
+  color: #706c82;
+}
+
+[data-theme="dark"] .hljs-keyword,
+[data-theme="dark"] .hljs-selector-tag,
+[data-theme="dark"] .hljs-addition {
+  color: #e8585e;
+}
+
+[data-theme="dark"] .hljs-number,
+[data-theme="dark"] .hljs-string,
+[data-theme="dark"] .hljs-meta .hljs-meta-string,
+[data-theme="dark"] .hljs-literal,
+[data-theme="dark"] .hljs-doctag,
+[data-theme="dark"] .hljs-regexp {
+  color: #6dceac;
+}
+
+[data-theme="dark"] .hljs-title,
+[data-theme="dark"] .hljs-section,
+[data-theme="dark"] .hljs-name,
+[data-theme="dark"] .hljs-selector-id,
+[data-theme="dark"] .hljs-selector-class {
+  color: #c4a5f5;
+}
+
+[data-theme="dark"] .hljs-attribute,
+[data-theme="dark"] .hljs-attr,
+[data-theme="dark"] .hljs-variable,
+[data-theme="dark"] .hljs-template-variable,
+[data-theme="dark"] .hljs-class .hljs-title,
+[data-theme="dark"] .hljs-type {
+  color: #f0b060;
+}
+
+[data-theme="dark"] .hljs-symbol,
+[data-theme="dark"] .hljs-bullet,
+[data-theme="dark"] .hljs-subst,
+[data-theme="dark"] .hljs-meta,
+[data-theme="dark"] .hljs-meta .hljs-keyword,
+[data-theme="dark"] .hljs-selector-attr,
+[data-theme="dark"] .hljs-selector-pseudo,
+[data-theme="dark"] .hljs-link {
+  color: #7dc8f0;
+}
+
+[data-theme="dark"] .hljs-built_in,
+[data-theme="dark"] .hljs-deletion {
+  color: #6dceac;
+}
