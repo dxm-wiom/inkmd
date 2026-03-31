@@ -102,5 +102,8 @@ function readFileWeb(file) {
       content: reader.result,
     });
   };
+  reader.onerror = () => {
+    emit('file:error', { name: file.name });
+  };
   reader.readAsText(file);
 }

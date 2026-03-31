@@ -55,6 +55,10 @@ on('navigate:editor', () => {
   navigateTo(editor);
 });
 
+on('file:error', (data) => {
+  showToast(`Could not read "${data.name}" — the file may be corrupted or unreadable`);
+});
+
 // Start on landing
 navigateTo(landing, {});
 
