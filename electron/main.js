@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const MD_REGEX = /\.(md|markdown|mdown|mkd|mdx|txt)$/i;
+const MD_REGEX = /\.(md|markdown|mdown|mkd|mdx|txt|json|yaml|yml|toml|csv|spec|log|ini|env|xml)$/i;
 
 let mainWindow;
 let pendingFile = null; // file to open once the renderer is ready
@@ -97,7 +97,7 @@ function buildMenu() {
       label: 'File',
       submenu: [
         {
-          label: 'Open Markdown File...',
+          label: 'Open File...',
           accelerator: 'CmdOrCtrl+O',
           click: () => openFileDialog(),
         },
@@ -142,9 +142,10 @@ function buildMenu() {
 
 async function openFileDialog() {
   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
-    title: 'Open Markdown File',
+    title: 'Open File',
     filters: [
-      { name: 'Markdown', extensions: ['md', 'markdown', 'mdown', 'mkd', 'mdx', 'txt'] },
+      { name: 'Markdown', extensions: ['md', 'markdown', 'mdown', 'mkd', 'mdx'] },
+      { name: 'Plain Text Files', extensions: ['txt', 'json', 'yaml', 'yml', 'toml', 'csv', 'spec', 'log', 'ini', 'env', 'xml'] },
       { name: 'All Files', extensions: ['*'] },
     ],
     properties: ['openFile'],

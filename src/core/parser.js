@@ -113,6 +113,39 @@ md.renderer.rules.heading_open = function (tokens, idx, options, env, self) {
   return defaultHeadingOpen(tokens, idx, options, env, self);
 };
 
+export const SUPPORTED_EXTENSIONS = [
+  '.md', '.markdown', '.mdown', '.mkd', '.mdx',
+  '.txt', '.json', '.yaml', '.yml', '.toml', '.csv',
+  '.spec', '.log', '.ini', '.env', '.xml',
+];
+
+const MD_EXTENSIONS = new Set(['.md', '.markdown', '.mdown', '.mkd', '.mdx']);
+
+const PLAIN_TEXT_FORMATS = {
+  '.json': 'json',
+  '.yaml': 'yaml',
+  '.yml': 'yaml',
+  '.xml': 'xml',
+  '.toml': 'toml',
+  '.ini': 'ini',
+  '.csv': 'plaintext',
+  '.txt': 'plaintext',
+  '.spec': 'plaintext',
+  '.log': 'plaintext',
+  '.env': 'plaintext',
+};
+
+export function parseFile(content, filename) {
+  const raw = filename || '';
+  const dotIdx = raw.lastIndexOf('.');
+  const ext = dotIdx >= 0 ? raw.slice(dotIdx).toLowerCase() : '';
+  if (!ext || MD_EXTENSIONS.has(ext)) {
+    return parse(content);
+  }
+  const lang = PLAIN_TEXT_FORMATS[ext] || 'plaintext';
+  return parse('```' + lang + '\n' + content + '\n```');
+}
+
 export function parse(markdown) {
   headingIds.clear();
   const raw = md.render(markdown);

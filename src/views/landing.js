@@ -1,6 +1,7 @@
 import * as fileInput from '../components/file-input.js';
 import * as textInput from '../components/text-input.js';
 import * as urlInput from '../components/url-input.js';
+import * as pathInput from '../components/path-input.js';
 import * as recentFiles from '../components/recent-files.js';
 import { renderToggleButtons, mountToggleButtons } from '../components/theme-toggle.js';
 
@@ -32,6 +33,7 @@ export function render() {
           ${fileInput.render()}
           ${textInput.render()}
           ${urlInput.render()}
+          ${pathInput.render()}
         </div>
         ${recentFiles.render()}
       </div>
@@ -43,10 +45,12 @@ export function mount() {
   fileInput.mount();
   textInput.mount();
   urlInput.mount();
+  pathInput.mount();
   recentFiles.mount();
   mountToggleButtons();
 }
 
 export function destroy() {
   fileInput.destroy();
+  pathInput.destroy();
 }

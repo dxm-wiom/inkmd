@@ -1,4 +1,5 @@
 import { emit } from '../core/events.js';
+import { SUPPORTED_EXTENSIONS } from '../core/parser.js';
 
 let dropAbort = null;
 
@@ -15,9 +16,9 @@ export function render() {
         </svg>
       </div>
       <div class="input-card-title">Open File</div>
-      <div class="input-card-desc">Drop a .md file or click to browse</div>
-      <div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Drop markdown file here or click to browse">
-        <input type="file" id="file-picker" accept=".md,.markdown,.txt" hidden />
+      <div class="input-card-desc">Markdown, JSON, YAML, and more</div>
+      <div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Drop a file here or click to browse">
+        <input type="file" id="file-picker" accept="${SUPPORTED_EXTENSIONS.join(',')}" hidden />
         <div class="drop-zone-text"><strong>Choose file</strong> or drag it here</div>
       </div>
     </div>

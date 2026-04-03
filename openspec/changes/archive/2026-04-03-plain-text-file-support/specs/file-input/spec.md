@@ -1,8 +1,5 @@
-# file-input Specification
+## MODIFIED Requirements
 
-## Purpose
-TBD - created by archiving change file-reader-error-handling. Update Purpose after archive.
-## Requirements
 ### Requirement: File read errors are surfaced to the user
 
 The system SHALL display a visible error message when a FileReader operation fails, instead of silently discarding the error.
@@ -18,6 +15,8 @@ The system SHALL display a visible error message when a FileReader operation fai
 - **WHEN** a user selects or drops a supported plain-text file
 - **THEN** the system SHALL emit a `file:loaded` event with the file name and content
 - **AND** no error message SHALL be displayed
+
+## ADDED Requirements
 
 ### Requirement: File picker and drag-and-drop accept all supported plain-text extensions
 

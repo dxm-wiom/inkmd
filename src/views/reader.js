@@ -1,4 +1,4 @@
-import { parse, extractHeadings } from '../core/parser.js';
+import { parseFile, extractHeadings } from '../core/parser.js';
 import { addRecentFile } from '../core/storage.js';
 import * as topBar from '../components/top-bar.js';
 import * as toc from '../components/toc.js';
@@ -25,7 +25,7 @@ export function render(data) {
   }
 
   const headings = extractHeadings(content);
-  const html = parse(content);
+  const html = parseFile(content, name);
 
   return `
     <div class="reader-layout view-enter">
