@@ -3,9 +3,9 @@ import { emit } from '../core/events.js';
 let pathAbort = null;
 
 export function render() {
-  const isElectron = !!window.electronAPI;
+  if (!window.electronAPI) return '';
   return `
-    <div class="input-card" id="path-input-card">
+    <div class="input-card input-card--compact" id="path-input-card">
       <div class="input-card-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
@@ -13,17 +13,11 @@ export function render() {
       </div>
       <div class="input-card-title">Local Path</div>
       <div class="input-card-desc">Open a file by its path on disk</div>
-      ${isElectron ? `
-        <div class="url-input-row">
-          <input type="text" class="url-input" id="path-field" placeholder="C:\\Users\\...\\notes.json" aria-label="Local file path" />
-          <button class="btn btn-primary" id="path-btn">Open</button>
-        </div>
-        <div id="path-error"></div>
-      ` : `
-        <div class="path-input-fallback">
-          Local path input requires the desktop app. Use the file picker instead.
-        </div>
-      `}
+      <div class="url-input-row">
+        <input type="text" class="url-input" id="path-field" placeholder="C:\\Users\\...\\notes.json" aria-label="Local file path" />
+        <button class="btn btn-primary" id="path-btn">Open</button>
+      </div>
+      <div id="path-error"></div>
     </div>
   `;
 }

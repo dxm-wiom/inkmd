@@ -30,10 +30,10 @@ In the Electron desktop app, the system SHALL provide a "Local Path" input card 
 
 ### Requirement: Local path input shows a browser fallback in the PWA
 
-In the browser (non-Electron) context, the local-path input card SHALL display a static message informing the user that local path access is unavailable and directing them to use the file picker instead.
+In the browser (non-Electron) context, the local-path input card SHALL NOT be rendered — the component's `render()` function SHALL return an empty string, producing no DOM output.
 
 #### Scenario: Path input card rendered in browser
 
 - **WHEN** the landing page is loaded in a browser (no `window.electronAPI`)
-- **THEN** the path-input card SHALL render a message explaining that local path input requires the desktop app
-- **AND** the text input and submit button SHALL NOT be shown
+- **THEN** the path-input component SHALL produce no visible card or message
+- **AND** the landing input grid SHALL reflow as if the path-input slot does not exist

@@ -52,9 +52,22 @@
 
 .input-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: minmax(200px, 280px) 1fr;
+  align-items: start;
   gap: var(--space-lg);
   margin-bottom: var(--space-2xl);
+}
+
+.input-grid-utilities {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+@media (max-width: 680px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .recent-section {

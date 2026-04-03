@@ -30,10 +30,12 @@ export function render() {
       </div>
       <div class="landing-container">
         <div class="input-grid">
-          ${fileInput.render()}
+          <div class="input-grid-utilities">
+            ${fileInput.render()}
+            ${urlInput.render()}
+            ${pathInput.render()}
+          </div>
           ${textInput.render()}
-          ${urlInput.render()}
-          ${pathInput.render()}
         </div>
         ${recentFiles.render()}
       </div>
