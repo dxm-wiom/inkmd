@@ -21,8 +21,8 @@ src/
   main.js              — App entry, view navigation, lifecycle
   sw.js                — Service worker (Workbox routing)
   styles/              — CSS split by concern (variables, typography, layout, reader, components, code, dark, landing)
-  components/          — UI components (file-input, text-input, url-input, recent-files, top-bar, toc, search, theme-toggle, code-block)
-  core/                — Parser (markdown-it config), storage (localStorage), events (custom emitter)
+  components/          — UI components (file-input, text-input, url-input, path-input, recent-files, top-bar, toc, search, theme-toggle, code-block)
+  core/                — Parser (markdown-it config + plain-text format detection), storage (localStorage), events (custom emitter)
   views/               — Landing page + reader view
 electron/
   main.js              — Electron main process (window, IPC, menus, file associations)
@@ -58,9 +58,37 @@ Features shipped:
 - Fixed code block overflow on narrow screens
 - Improved padding/margins for mobile
 
+### v1.1.0 — Editor Mode (2026-03-21)
+
+**Commit (a7d7af7):** Added editor mode with live preview.
+
+- **Editor mode** — split-pane edit/preview with live markdown rendering
+- **Send to Claude** — sends current document to Claude for AI assistance
+- **Save** — Ctrl+S saves edited file (Electron: writes to disk; PWA: download)
+- **FileReader error handling** — visible toast feedback when a file cannot be read (48cd9a7)
+
+### v1.2.0 — Plain-Text File Support + Local Path Input (2026-04-03)
+
+**Commit (6abda81):** Expanded format support and new input method.
+
+- **Plain-text file support** — accepts `.json`, `.yaml`, `.yml`, `.toml`, `.csv`, `.txt`, `.spec`, `.log`, `.ini`, `.env`, `.xml` in addition to markdown; non-markdown files render as syntax-highlighted code blocks
+- **Format detection** — `parseFile(content, filename)` in `src/core/parser.js` maps extension → hljs language; `SUPPORTED_EXTENSIONS` array is the single source of truth used by all components and Electron dialog filters
+- **Local Path input card** — new landing page card; in Electron, user can type/paste an absolute path to load a file; in PWA the card is hidden entirely
+- **Electron updates** — `MD_REGEX`, file dialog filters, and menu label all updated to reflect broader format support
+
+### v1.2.1 — Landing UI Refresh (2026-04-04)
+
+**Commit (95d158b):** Redesigned landing page layout.
+
+- **Asymmetric grid** — utility cards (Open File, From URL, Local Path) stack compactly in a narrow left column (`minmax(200px, 280px)`); Paste Markdown occupies the full-height right column
+- **Compact card variant** — `.input-card--compact` CSS modifier reduces padding and tightens drop zone to a single-row strip
+- **Taller paste area** — textarea `min-height` raised from 100px to 240px
+- **Local Path hidden in PWA** — `path-input.js` returns empty string in browser context (no fallback message card)
+- **Responsive** — grid collapses to single column at ≤680px
+
 ### Current State
 
-**Feature-complete at v1.0.0.** Both desktop (Windows ARM64/x64) and web (PWA) platforms work. The app is deployed to GitHub Pages and packages as a Windows NSIS installer.
+**v1.2.1.** Both desktop (Windows ARM64) and web (PWA) platforms are live. App deployed to GitHub Pages; installer at `release/inkMD Setup 1.2.0.exe`.
 
 ## Build Commands
 
