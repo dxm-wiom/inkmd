@@ -1,4 +1,4 @@
-import { parse } from '../core/parser.js';
+import { parse, parseFile, isMarkdownFile } from '../core/parser.js';
 import { getDocument, updateContent, isDirty, markSaved, setFilePath } from '../core/document.js';
 import { emit } from '../core/events.js';
 import { renderToggleButtons, mountToggleButtons } from '../components/theme-toggle.js';
@@ -20,12 +20,48 @@ function escapeAttr(str) {
   return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+function renderPreview(content, name) {
+  return isMarkdownFile(name) ? parse(content) : parseFile(content, name);
+}
+
+function placeholderFor(name) {
+  if (!name) return 'Start writing markdown...';
+  return isMarkdownFile(name) ? `Edit ${name}...` : `Editing ${name}...`;
+}
+
+const MIME_BY_EXT = {
+  md: 'text/markdown', markdown: 'text/markdown', mdown: 'text/markdown', mkd: 'text/markdown', mdx: 'text/markdown',
+  txt: 'text/plain', log: 'text/plain', spec: 'text/plain', env: 'text/plain', ini: 'text/plain',
+  json: 'application/json',
+  yaml: 'application/yaml', yml: 'application/yaml',
+  toml: 'application/toml',
+  csv: 'text/csv',
+  xml: 'application/xml',
+};
+
+function extOf(name) {
+  return (name || '').match(/\.([^.]+)$/)?.[1].toLowerCase() || '';
+}
+
+function mimeFor(name) {
+  return MIME_BY_EXT[extOf(name)] || 'text/plain';
+}
+
+function pickerTypesFor(name) {
+  const ext = extOf(name);
+  const mime = MIME_BY_EXT[ext] || 'text/plain';
+  const dotExt = ext ? '.' + ext : '.md';
+  return [{ description: ext ? ext.toUpperCase() : 'Markdown', accept: { [mime]: [dotExt] } }];
+}
+
 export function render() {
   const doc = getDocument();
   const name = doc.name || 'Untitled';
   const content = doc.content || '';
   const dirty = isDirty();
-  const initialHtml = content ? parse(content) : '';
+  const initialHtml = content ? renderPreview(content, doc.name) : '';
+  const isMd = isMarkdownFile(doc.name);
+  const formatLabel = extOf(doc.name).toUpperCase();
 
   return `
     <div class="editor-layout view-enter">
@@ -58,6 +94,7 @@ export function render() {
       </div>
       <div class="editor-toolbar">
         <div class="editor-toolbar-left">
+          ${isMd ? `
           <button class="toolbar-btn" id="tb-bold" title="Bold (Ctrl+B)" aria-label="Bold"><strong>B</strong></button>
           <button class="toolbar-btn" id="tb-italic" title="Italic (Ctrl+I)" aria-label="Italic"><em>I</em></button>
           <div class="toolbar-heading-wrap" id="tb-heading-wrap">
@@ -86,6 +123,9 @@ export function render() {
               <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
             </svg>
           </button>
+          ` : `
+          <span class="toolbar-format-label">${escapeHtml(formatLabel || 'TEXT')}</span>
+          `}
         </div>
         <div class="editor-toolbar-right">
           <button class="btn-claude" id="send-to-claude-btn" title="Copy and send to Claude">
@@ -104,7 +144,7 @@ export function render() {
       </div>
       <div class="editor-split">
         <div class="editor-pane-write">
-          <textarea class="editor-textarea" id="editor-textarea" placeholder="Start writing markdown..." spellcheck="true">${escapeHtml(content)}</textarea>
+          <textarea class="editor-textarea" id="editor-textarea" placeholder="${escapeAttr(placeholderFor(doc.name))}" spellcheck="true">${escapeHtml(content)}</textarea>
         </div>
         <div class="editor-pane-preview">
           <div class="editor-preview-content markdown-body" id="editor-preview">${initialHtml}</div>
@@ -135,6 +175,7 @@ export function mount() {
   codeBlock.mount();
 
   // --- Live preview (debounced) ---
+  const docName = getDocument().name;
   textarea.addEventListener('input', () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
@@ -142,7 +183,7 @@ export function mount() {
       if (val === lastRendered) return;
       lastRendered = val;
       updateContent(val);
-      preview.innerHTML = parse(val);
+      preview.innerHTML = renderPreview(val, docName);
       codeBlock.mount();
       updateDirtyDot();
     }, 250);
@@ -160,17 +201,19 @@ export function mount() {
     }
   }, { signal });
 
-  // --- Keyboard shortcuts (textarea-specific: Bold, Italic) ---
-  textarea.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-      e.preventDefault();
-      wrapSelection(textarea, '**', '**');
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
-      e.preventDefault();
-      wrapSelection(textarea, '*', '*');
-    }
-  }, { signal });
+  // --- Keyboard shortcuts (textarea-specific: Bold, Italic) — markdown-only ---
+  if (isMarkdownFile(getDocument().name)) {
+    textarea.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        wrapSelection(textarea, '**', '**');
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+        e.preventDefault();
+        wrapSelection(textarea, '*', '*');
+      }
+    }, { signal });
+  }
 
   // Global Ctrl+S capture (single handler avoids double-fire)
   document.addEventListener('keydown', (e) => {
@@ -444,10 +487,7 @@ async function handleSave() {
     try {
       const handle = await window.showSaveFilePicker({
         suggestedName: doc.name || 'document.md',
-        types: [{
-          description: 'Markdown',
-          accept: { 'text/markdown': ['.md'] },
-        }],
+        types: pickerTypesFor(doc.name),
       });
       const writable = await handle.createWritable();
       await writable.write(content);
@@ -462,7 +502,7 @@ async function handleSave() {
     }
   } else {
     // Fallback: blob download
-    const blob = new Blob([content], { type: 'text/markdown' });
+    const blob = new Blob([content], { type: mimeFor(doc.name) });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

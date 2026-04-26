@@ -1,6 +1,6 @@
 {
   "name": "inkmd",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "A beautiful markdown reader",
   "type": "module",
   "main": "electron/main.js",
@@ -10,7 +10,10 @@
     "preview": "vite preview",
     "electron:dev": "vite build && electron .",
     "electron:build": "vite build && electron-builder --win --arm64",
-    "electron:build:x64": "vite build && electron-builder --win --x64"
+    "electron:build:x64": "vite build && electron-builder --win --x64",
+    "electron:build:mac": "vite build && electron-builder --mac --arm64",
+    "electron:build:mac:x64": "vite build && electron-builder --mac --x64",
+    "icons:icns": "node scripts/generate-icns.js"
   },
   "dependencies": {
     "dompurify": "^3.3.3",
@@ -45,6 +48,17 @@
       ],
       "icon": "build/icon.ico"
     },
+    "mac": {
+      "target": [
+        { "target": "dmg", "arch": ["arm64"] },
+        { "target": "zip", "arch": ["arm64"] }
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.icns",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "identity": null
+    },
     "nsis": {
       "oneClick": true,
       "perMachine": false,
@@ -53,18 +67,22 @@
       "createStartMenuShortcut": true
     },
     "fileAssociations": [
-      {
-        "ext": "md",
-        "name": "Markdown File",
-        "description": "Markdown Document",
-        "role": "Editor"
-      },
-      {
-        "ext": "markdown",
-        "name": "Markdown File",
-        "description": "Markdown Document",
-        "role": "Editor"
-      }
+      { "ext": "md",       "name": "Markdown File", "description": "Markdown Document",   "role": "Editor" },
+      { "ext": "markdown", "name": "Markdown File", "description": "Markdown Document",   "role": "Editor" },
+      { "ext": "mdown",    "name": "Markdown File", "description": "Markdown Document",   "role": "Editor" },
+      { "ext": "mkd",      "name": "Markdown File", "description": "Markdown Document",   "role": "Editor" },
+      { "ext": "mdx",      "name": "MDX File",      "description": "MDX Document",        "role": "Editor" },
+      { "ext": "txt",      "name": "Text File",     "description": "Plain Text Document", "role": "Editor" },
+      { "ext": "json",     "name": "JSON File",     "description": "JSON Document",       "role": "Editor" },
+      { "ext": "yaml",     "name": "YAML File",     "description": "YAML Document",       "role": "Editor" },
+      { "ext": "yml",      "name": "YAML File",     "description": "YAML Document",       "role": "Editor" },
+      { "ext": "toml",     "name": "TOML File",     "description": "TOML Document",       "role": "Editor" },
+      { "ext": "csv",      "name": "CSV File",      "description": "CSV Document",        "role": "Editor" },
+      { "ext": "spec",     "name": "Spec File",     "description": "Spec Document",       "role": "Editor" },
+      { "ext": "log",      "name": "Log File",      "description": "Log Document",        "role": "Editor" },
+      { "ext": "ini",      "name": "INI File",      "description": "INI Document",        "role": "Editor" },
+      { "ext": "env",      "name": "Env File",      "description": "Environment File",    "role": "Editor" },
+      { "ext": "xml",      "name": "XML File",      "description": "XML Document",        "role": "Editor" }
     ]
   }
 }

@@ -31,6 +31,24 @@ if (!gotLock) {
     }
   });
 
+  // macOS: file associations dispatch via 'open-file', not argv. The listener
+  // must be attached during 'will-finish-launching' so a cold-start event
+  // (fired before app.whenReady resolves) is not dropped.
+  app.on('will-finish-launching', () => {
+    app.on('open-file', (event, filePath) => {
+      event.preventDefault();
+      if (mainWindow) {
+        if (mainWindow.webContents.isLoading()) {
+          pendingFile = filePath;
+        } else {
+          sendFileToRenderer(filePath);
+        }
+      } else {
+        pendingFile = filePath;
+      }
+    });
+  });
+
   app.whenReady().then(() => {
     createWindow();
 
@@ -202,10 +220,11 @@ ipcMain.handle('save-file', async (_event, { filePath, content, name }) => {
       return { success: true, filePath };
     } else {
       const { canceled, filePath: savePath } = await dialog.showSaveDialog(mainWindow, {
-        title: 'Save Markdown File',
+        title: 'Save File',
         defaultPath: name || 'document.md',
         filters: [
-          { name: 'Markdown', extensions: ['md', 'markdown'] },
+          { name: 'Markdown', extensions: ['md', 'markdown', 'mdown', 'mkd', 'mdx'] },
+          { name: 'Plain Text', extensions: ['txt', 'json', 'yaml', 'yml', 'toml', 'csv', 'spec', 'log', 'ini', 'env', 'xml'] },
           { name: 'All Files', extensions: ['*'] },
         ],
       });

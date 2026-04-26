@@ -113,6 +113,12 @@ md.renderer.rules.heading_open = function (tokens, idx, options, env, self) {
   return defaultHeadingOpen(tokens, idx, options, env, self);
 };
 
+// Master list of supported file extensions. When changing this, also update:
+//   - MD_REGEX in electron/main.js
+//   - openFileDialog filters in electron/main.js
+//   - save-file IPC dialog filters in electron/main.js
+//   - "Open File…" menu label in electron/main.js
+//   - fileAssociations in package.json (one entry per extension on macOS)
 export const SUPPORTED_EXTENSIONS = [
   '.md', '.markdown', '.mdown', '.mkd', '.mdx',
   '.txt', '.json', '.yaml', '.yml', '.toml', '.csv',
@@ -134,6 +140,13 @@ const PLAIN_TEXT_FORMATS = {
   '.log': 'plaintext',
   '.env': 'plaintext',
 };
+
+export function isMarkdownFile(filename) {
+  const raw = filename || '';
+  const dotIdx = raw.lastIndexOf('.');
+  const ext = dotIdx >= 0 ? raw.slice(dotIdx).toLowerCase() : '';
+  return !ext || MD_EXTENSIONS.has(ext);
+}
 
 export function parseFile(content, filename) {
   const raw = filename || '';
