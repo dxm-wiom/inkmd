@@ -5,3 +5,11 @@ release
 .playwright-mcp
 *.output
 test-*.png
+
+# macOS
+.DS_Store
+
+# Claude Code local config
+.claude/settings.local.json
+.claude/commands/
+.claude/skills/
